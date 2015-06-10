@@ -34,7 +34,8 @@
     </None>
     <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
     <Content Include="Templates\DeploymentTemplate.json" />
-    <None Include="Scripts\Download-SIOPackages.ps1" />
+    <None Include="Scripts\Install-SIOMgmtPackages.ps1" />
+    <None Include="Scripts\Install-SIONodePackages.ps1" />
     <None Include="Templates\DeploymentTemplate.param.dev.json" />
   </ItemGroup>
   <ItemGroup>
