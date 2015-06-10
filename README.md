@@ -1,4 +1,4 @@
-# Simple deployment of an Windows VM with Tags
+# Rapidly deploy ScaleIO in Azure!
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbkvarda%2Fsioazure%2Fmaster%2Fsioazure%2FTemplates%2FDeploymentTemplate.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
