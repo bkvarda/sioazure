@@ -1,0 +1,374 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "newStorageAccountNameName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the new storage account created to store the VMs"
+      }
+
+    },
+    "newStorageAccountNameType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_ZRS"
+      ],
+      "metadata": {
+        "description": "Storage redundancy type"
+      }
+    },
+    "newStorageAccountNameLocation": {
+      "type": "string",
+      "defaultValue": "West US",
+      "allowedValues": [
+        "East US",
+        "West US",
+        "West Europe",
+        "East Asia",
+        "South East Asia"
+      ]
+    },
+    "siovnetLocation": {
+      "type": "string",
+      "defaultValue": "West US",
+      "allowedValues": [
+        "East US",
+        "West US",
+        "West Europe",
+        "East Asia",
+        "South East Asia"
+      ]
+    },
+    "siomgmtName": {
+      "type": "string"
+    },
+    "siomgmtAdminUserName": {
+      "type": "string"
+    },
+    "siomgmtAdminPassword": {
+      "type": "securestring"
+    },
+    "siomgmtWindowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "Windows-Server-Technical-Preview"
+      ]
+    },
+    "siovmSize": {
+      "type": "string",
+      "defaultValue": "Basic_A1",
+      "allowedValues": [
+        "Basic_A1",
+        "Basic_A2",
+        "Basic_A3",
+        "Basic_A4",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_G1",
+        "Standard_G2"
+      ]
+    },
+    "numberOfNodes": {
+      "type": "int",
+      "defaultValue": 100,
+      "allowedValues": [
+        3,
+        4,
+        5,
+        10,
+        20,
+        30,
+        50,
+        100,
+        200,
+        300,
+        1000
+      ]
+    },
+    "publicIPAddressNameDnsName": {
+      "type": "string"
+    },
+    "sionodeName": {
+      "type": "string"
+    },
+    "sionodeAdminUserName": {
+      "type": "string"
+    },
+    "sionodeAdminPassword": {
+      "type": "securestring"
+    },
+    "sionodeWindowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "Windows-Server-Technical-Preview"
+      ]
+    }
+
+  },
+  "variables": {
+    "siovnetPrefix": "10.0.0.0/16",
+    "siovnetSubnet1Name": "Subnet-1",
+    "siovnetSubnet1Prefix": "10.0.0.0/24",
+    "siovnetSubnet2Name": "Subnet-2",
+    "siovnetSubnet2Prefix": "10.0.1.0/24",
+    "siomgmtImagePublisher": "MicrosoftWindowsServer",
+    "siomgmtImageOffer": "WindowsServer",
+    "siomgmtOSDiskName": "siomgmtOSDisk",
+    "siomgmtVmSize": "Standard_D1",
+    "siomgmtVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'siovnet')]",
+    "siomgmtSubnetRef": "[concat(variables('siomgmtVnetID'), '/subnets/', variables('siovnetSubnet1Name'))]",
+    "siomgmtStorageAccountContainerName": "vhds",
+    "siomgmtNicName": "[concat(parameters('siomgmtName'), 'NetworkInterface')]",
+    "publicIPAddressNameName": "publicIPAddressName",
+    "sionodeImagePublisher": "MicrosoftWindowsServer",
+    "sionodeImageOffer": "WindowsServer",
+    "sionodeOSDiskName": "sionodeOSDisk",
+    "sionodeVmSize": "Standard_D1",
+    "sionodeVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'siovnet')]",
+    "sionodeSubnetRef": "[concat(variables('sionodeVnetID'), '/subnets/', variables('siovnetSubnet1Name'))]",
+    "sionodeStorageAccountContainerName": "vhds",
+    "sionodeNicName": "[concat(parameters('sionodeName'), 'NetworkInterface')]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('newStorageAccountNameName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[parameters('newStorageAccountNameLocation')]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "newStorageAccountName"
+      },
+      "properties": {
+        "accountType": "[parameters('newStorageAccountNameType')]"
+      }
+    },
+    {
+      "name": "siovnet",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[parameters('siovnetLocation')]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "siovnet"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('siovnetPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('siovnetSubnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('siovnetSubnet1Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('siovnetSubnet2Name')]",
+            "properties": {
+              "addressPrefix": "[variables('siovnetSubnet2Prefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('siomgmtNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('siovnetLocation')]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', 'siovnet')]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameName'))]"
+      ],
+      "tags": {
+        "displayName": "siomgmtNic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('siomgmtSubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressNameName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('siomgmtName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[parameters('siovnetLocation')]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountNameName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('siomgmtNicName'))]"
+      ],
+      "tags": {
+        "displayName": "siomgmt"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('siovmSize')]"
+        },
+        "osProfile": {
+          "computername": "[parameters('siomgmtName')]",
+          "adminUsername": "[parameters('siomgmtAdminUsername')]",
+          "adminPassword": "[parameters('siomgmtAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('siomgmtImagePublisher')]",
+            "offer": "[variables('siomgmtImageOffer')]",
+            "sku": "[parameters('siomgmtWindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "siomgmtOSDisk",
+            "vhd": {
+              "uri": "[concat('http://', parameters('newStorageAccountNameName'), '.blob.core.windows.net/', variables('siomgmtStorageAccountContainerName'), '/', variables('siomgmtOSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('siomgmtNicName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('publicIPAddressNameName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[parameters('siovnetLocation')]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "publicIPAddressName"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('publicIPAddressNameDnsName')]"
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('sionodeNicName'), copyindex())]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('siovnetLocation')]",
+      "apiVersion": "2015-05-01-preview",
+      "copy": {
+        "name": "sio",
+        "count": "[parameters('numberOfNodes')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', 'siovnet')]"
+      ],
+      "tags": {
+        "displayName": "[concat('sionodeNic', copyindex())]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('sionodeSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('sionodeName'), copyindex())]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[parameters('siovnetLocation')]",
+      "copy": {
+        "name": "sio",
+        "count":  "[parameters('numberOfNodes')]"
+      },
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountNameName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('sionodeNicName'), copyindex())]"
+      ],
+      "tags": {
+        "displayName": "sionode"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('siovmSize')]"
+        },
+        "osProfile": {
+          "computername": "[concat(parameters('sionodeName'), copyIndex())]",
+          "adminUsername": "[parameters('sionodeAdminUsername')]",
+          "adminPassword": "[parameters('sionodeAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('sionodeImagePublisher')]",
+            "offer": "[variables('sionodeImageOffer')]",
+            "sku": "[parameters('sionodeWindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "sionodeOSDisk",
+            "vhd": {
+              "uri": "[concat('http://', parameters('newStorageAccountNameName'), '.blob.core.windows.net/', variables('sionodeStorageAccountContainerName'), '/', variables('sionodeOSDiskName'), copyIndex(), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "sionodeDataDisk",
+              "vhd": {
+                "uri": "[concat('http://', parameters('newStorageAccountNameName'), '.blob.core.windows.net/', variables('sionodeStorageAccountContainerName'), '/', variables('sionodeOSDiskName'), copyIndex(), 'data.vhd')]"
+              },
+              "lun": 0,
+              "diskSizeGB": 100,
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('sionodeNicName'), copyIndex()))]"
+            }
+          ]
+        }
+      }
+    }
+
+  ],
+    "outputs": {
+    }
+}
