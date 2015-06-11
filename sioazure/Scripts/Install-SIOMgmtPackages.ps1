@@ -22,7 +22,7 @@ Invoke-WebRequest $onegeturl -Outfile $onegetdestination
 
 #Install OneGet
 Write-Host "Installing OneGet"
-Start-Process C:\scaleio\oneget.exe /s
+Start-Process "$rootdestination\oneget.exe" /s
 
 #Install Java
 Install-Package -Name javaruntime -Force

@@ -312,7 +312,7 @@
       "location": "[parameters('siovnetLocation')]",
       "copy": {
         "name": "sio",
-        "count":  "[parameters('numberOfNodes')]"
+        "count": "[parameters('numberOfNodes')]"
       },
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
@@ -366,7 +366,28 @@
           ]
         }
       }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('siomgmtName'), '/extension')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('siovnetLocation')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('siomgmtName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "https://raw.githubusercontent.com/bkvarda/sioazure/master/sioazure/Scripts/Install-SIOMgmtPackages.ps1"
+          ],
+          "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File Install-SIOMgmtPackages.ps1"
+        }
+      }
     }
+
 
   ],
     "outputs": {
