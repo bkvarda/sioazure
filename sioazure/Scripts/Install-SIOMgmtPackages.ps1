@@ -5,8 +5,8 @@
 #Current URL for ScaleIO Windows Package Download#
 
 $onegeturl = "http://oneget.org/install-oneget.exe"
-$siourl = "ftp://ftp.emc.com/Downloads/ScaleIO/ScaleIO_Windows_SW_Download.zip"
-$rootdestination = "C:\scaleio3"
+$siourl = "http://bkvarda.blob.core.windows.net/sioazure/scaleio.zip"
+$rootdestination = "C:\scaleio"
 
 #Give use unlimited power muahahah
 Set-ExecutionPolicy Unrestricted
@@ -22,11 +22,11 @@ Invoke-WebRequest $onegeturl -Outfile $onegetdestination
 
 #Install OneGet
 Write-Host "Installing OneGet"
-Start-Process "$rootdestination\oneget.exe" /s
+Start-Process "$rootdestination\oneget.exe" /s -Wait
 
 #Install Java
 Install-Package -Name javaruntime -Force
-Get-Package -Name javaruntime
+
 
 #Download the ScaleIO Zip
 Write-Host "Downloading ScaleIO files..."

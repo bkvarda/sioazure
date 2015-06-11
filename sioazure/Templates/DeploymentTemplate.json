@@ -203,7 +203,8 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress":  "10.0.0.4",
               "subnet": {
                 "id": "[variables('siomgmtSubnetRef')]"
               },
@@ -352,7 +353,7 @@
               "vhd": {
                 "uri": "[concat('http://', parameters('newStorageAccountNameName'), '.blob.core.windows.net/', variables('sionodeStorageAccountContainerName'), '/', variables('sionodeOSDiskName'), copyIndex(), 'data.vhd')]"
               },
-              "lun": 0,
+              "lun": 3,
               "diskSizeGB": 100,
               "createOption": "Empty"
             }
@@ -381,9 +382,33 @@
         "typeHandlerVersion": "1.2",
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/bkvarda/sioazure/master/sioazure/Scripts/Install-SIOMgmtPackages.ps1"
+            "http://bkvarda.blob.core.windows.net/sioazure/Install-SIOMgmtPackages.ps1"
           ],
           "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File Install-SIOMgmtPackages.ps1"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('sionodeName'), copyIndex(), '/extension')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('siovnetLocation')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('sionodeName'), copyIndex())]"
+      ],
+      "copy": {
+        "name": "sio",
+        "count": "[parameters('numberOfNodes')]"
+      },
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "http://bkvarda.blob.core.windows.net/sioazure/Install-SIONodePackages.ps1"
+          ],
+          "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File Install-SIONodePackages.ps1"
         }
       }
     }
