@@ -288,7 +288,8 @@
         "count": "[parameters('numberOfNodes')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', 'siovnet')]"
+        "[concat('Microsoft.Network/virtualNetworks/', 'siovnet')]",
+        "[concat('Microsoft.Network/networkInterfaces/',variables('siomgmtNicName'))]"
       ],
       "tags": {
         "displayName": "[concat('sionodeNic', copyindex())]"
