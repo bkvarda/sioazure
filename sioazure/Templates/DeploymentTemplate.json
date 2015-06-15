@@ -223,7 +223,8 @@
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountNameName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('siomgmtNicName'))]"
+        "[concat('Microsoft.Network/networkInterfaces/', variables('siomgmtNicName'))]",
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('sionodeName'), parameters('numberOfNodes'))]"
       ],
       "tags": {
         "displayName": "siomgmt"
