@@ -52,6 +52,11 @@ Start-Process "$rootdestination\ScaleIO_1.32_GUI_for_Windows_Download\EMC-ScaleI
 Write-Host "Intalling SIO Gateway"
 msiexec.exe /i "$rootdestination\ScaleIO_1.32_Gateway_for_Windows_Download\EMC-ScaleIO-gateway-1.32-402.1-x64.msi" /quiet  GATEWAY_ADMIN_PASSWORD='Password123' GATEWAY_ADMIN_PWD_CNFRM='Password123'
 
+#Add MDMs to TrustedHosts
+Write-Host "Adding MDMs as trusted hosts"
+Set-Item wsman:\localhost\Client\TrustedHosts -value 10.0.0.5
+Set-Item wsman:\localhost\Client\TrustedHosts -value 10.0.0.6
+
 #Installing Python packages on MDMs
 Write-Host "Installing Python on MDMs"
 Invoke-Command -ComputerName 10.0.0.5 -FilePath $nodescriptdestination
