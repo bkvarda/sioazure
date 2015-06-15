@@ -385,7 +385,7 @@
           "fileUris": [
             "http://bkvarda.blob.core.windows.net/sioazure/Install-SIOMgmtPackages.ps1"
           ],
-          "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File Install-SIOMgmtPackages.ps1"
+          "commandToExecute": "[concat("powershell.exe -ExecutionPolicy Unrestricted -File Install-SIOMgmtPackages.ps1 -Nodes ", parameters('numberOfNodes'))]"
         }
       }
     },

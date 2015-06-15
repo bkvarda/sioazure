@@ -2,6 +2,12 @@
 # Install.SIOMgmtPackages.ps1
 #
 
+Param(
+  [string]$Nodes
+)
+
+Write-Host $Nodes
+
 #Current URL for ScaleIO Windows Package Download#
 
 $onegeturl = "http://oneget.org/install-oneget.exe"
