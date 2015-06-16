@@ -111,9 +111,6 @@
     },
     "publicIPAddressNameDnsName": {
       "type": "string"
-    },
-    "sionodeName": {
-      "type": "string"
     }
 
   },
