@@ -3,7 +3,9 @@
 #
 
 Param(
-  [string]$Nodes
+  [int]$Nodes,
+  [string]$Username,
+  [string]$Password
 )
 
 Write-Host $Nodes
@@ -13,6 +15,8 @@ Write-Host $Nodes
 $onegeturl = "http://oneget.org/install-oneget.exe"
 $siourl = "http://bkvarda.blob.core.windows.net/sioazure/scaleio.zip"
 $nodescripturl = "http://bkvarda.blob.core.windows.net/sioazure/Install-SIONodePackages.ps1"
+$csvscripturl = "http://bkvarda.blob.core.windows.net/sioazure/Build-SIOCSV.ps1"
+$clusterscripturl = "http://bkvarda.blob.core.windows.net/sioazure/Create-Cluster.ps1"
 $rootdestination = "C:\scaleio"
 
 #Give use unlimited power muahahah
@@ -26,6 +30,16 @@ New-Item -Force -ItemType directory -Path $rootdestination
 Write-Host "Downloading Node Script"
 $nodescriptdestination = $rootdestination + "\Install-SIONodePackages.ps1"
 Invoke-WebRequest $nodescripturl -Outfile $nodescriptdestination
+
+#Download CSV script
+Write-Host "Downloading CSV Script"
+$csvscriptdestination = $rootdestination + "\Build-SIOCSV.ps1"
+Invoke-WebRequest $csvscripturl -Outfile $csvscriptdestination
+
+#Download Create-Cluster script
+Write-Host "Downloading Cluster Creation Script"
+$clusterscriptdestination = $rootdestination + "\Create-Cluster.ps1"
+Invoke-WebRequest $clusterscripturl -OutFile $clusterscriptdestination
 
 #Download OneGet
 Write-Host "Downloading OneGet"
@@ -58,24 +72,8 @@ Start-Process "$rootdestination\ScaleIO_1.32_GUI_for_Windows_Download\EMC-ScaleI
 Write-Host "Intalling SIO Gateway"
 msiexec.exe /i "$rootdestination\ScaleIO_1.32_Gateway_for_Windows_Download\EMC-ScaleIO-gateway-1.32-402.1-x64.msi" /quiet  GATEWAY_ADMIN_PASSWORD='Password123' GATEWAY_ADMIN_PWD_CNFRM='Password123'
 
-#Add MDMs to TrustedHosts
-Write-Host "Adding MDMs as trusted hosts"
-Set-Item wsman:\localhost\Client\TrustedHosts -value 10.0.0.5
-Set-Item wsman:\localhost\Client\TrustedHosts -value 10.0.0.6
-
-#Installing Python packages on MDMs
-Write-Host "Installing Python on MDMs"
-Invoke-Command -ComputerName 10.0.0.5 -FilePath $nodescriptdestination
-Invoke-Command -ComputerName 10.0.0.6 -FilePath $nodescriptdestination
-
 #Build a CSV payload for creation of cluster
-
-#Upload packages to the gateway
-
-#Push the packages out
-
-#Profit
-
+Invoke-Expression "$csvscriptdestination -Nodes $Nodes -Username $Username -Password $Password"
 
 
 
