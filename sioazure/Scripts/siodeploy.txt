@@ -1,4 +1,10 @@
-im login --host 10.0.0.4 --port 443 --username admin --password Password123 --cer <certificate_path>
+im login --host 10.0.0.4 --port 443 --username admin --password Password123 --no_certificate_validation true
+im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-callhome-1.32-402.1.msi
+im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-lia-1.32-402.1.msi
+im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-mdm-1.32-402.1.msi
+im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-sdc-1.32-402.1.msi
+im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-sds-1.32-402.1.msi
+im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-tb-1.32-402.1.msi
 im install --path C:\scaleio\install_csv.csv --mdm_password Password123 --lia_password Password123 --non_interactive true
 im set_upload_state
 im set_install_state

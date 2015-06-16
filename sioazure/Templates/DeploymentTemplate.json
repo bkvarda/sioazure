@@ -2,14 +2,14 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "newStorageAccountNameName": {
+    "newStorageAccountName": {
       "type": "string",
       "metadata": {
         "description": "Name of the new storage account created to store the VMs"
       }
 
     },
-    "newStorageAccountNameType": {
+    "newStorageAccountType": {
       "type": "string",
       "defaultValue": "Standard_LRS",
       "allowedValues": [
@@ -21,7 +21,7 @@
         "description": "Storage redundancy type"
       }
     },
-    "newStorageAccountNameLocation": {
+    "newStorageAccountLocation": {
       "type": "string",
       "defaultValue": "West US",
       "allowedValues": [
@@ -46,13 +46,13 @@
     "siomgmtName": {
       "type": "string"
     },
-    "siomgmtAdminUserName": {
+    "adminUserName": {
       "type": "string"
     },
-    "siomgmtAdminPassword": {
+    "adminPassword": {
       "type": "securestring"
     },
-    "siomgmtWindowsOSVersion": {
+    "nodeWindowsOSVersion": {
       "type": "string",
       "defaultValue": "2012-R2-Datacenter",
       "allowedValues": [
@@ -62,7 +62,21 @@
         "Windows-Server-Technical-Preview"
       ]
     },
-    "siovmSize": {
+    "sioNodeVMSize": {
+      "type": "string",
+      "defaultValue": "Basic_A1",
+      "allowedValues": [
+        "Basic_A1",
+        "Basic_A2",
+        "Basic_A3",
+        "Basic_A4",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_G1",
+        "Standard_G2"
+      ]
+    },
+    "sioMgmtNodeVMSize": {
       "type": "string",
       "defaultValue": "Basic_A1",
       "allowedValues": [
@@ -87,6 +101,7 @@
         20,
         30,
         50,
+        95,
         98,
         100,
         200,
@@ -99,22 +114,6 @@
     },
     "sionodeName": {
       "type": "string"
-    },
-    "sionodeAdminUserName": {
-      "type": "string"
-    },
-    "sionodeAdminPassword": {
-      "type": "securestring"
-    },
-    "sionodeWindowsOSVersion": {
-      "type": "string",
-      "defaultValue": "2012-R2-Datacenter",
-      "allowedValues": [
-        "2008-R2-SP1",
-        "2012-Datacenter",
-        "2012-R2-Datacenter",
-        "Windows-Server-Technical-Preview"
-      ]
     }
 
   },
@@ -128,6 +127,7 @@
     "siomgmtImageOffer": "WindowsServer",
     "siomgmtOSDiskName": "siomgmtOSDisk",
     "siomgmtVmSize": "Standard_D1",
+    "sionodeName": "sionode",
     "siomgmtVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'siovnet')]",
     "siomgmtSubnetRef": "[concat(variables('siomgmtVnetID'), '/subnets/', variables('siovnetSubnet1Name'))]",
     "siomgmtStorageAccountContainerName": "vhds",
@@ -140,20 +140,20 @@
     "sionodeVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'siovnet')]",
     "sionodeSubnetRef": "[concat(variables('sionodeVnetID'), '/subnets/', variables('siovnetSubnet1Name'))]",
     "sionodeStorageAccountContainerName": "vhds",
-    "sionodeNicName": "[concat(parameters('sionodeName'), 'NetworkInterface')]"
+    "sionodeNicName": "[concat(variables('sionodeName'), 'NetworkInterface')]"
   },
   "resources": [
     {
-      "name": "[parameters('newStorageAccountNameName')]",
+      "name": "[parameters('newStorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
-      "location": "[parameters('newStorageAccountNameLocation')]",
+      "location": "[parameters('newStorageAccountLocation')]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [ ],
       "tags": {
         "displayName": "newStorageAccountName"
       },
       "properties": {
-        "accountType": "[parameters('newStorageAccountNameType')]"
+        "accountType": "[parameters('newStorageAccountType')]"
       }
     },
     {
@@ -223,7 +223,7 @@
       "location": "[parameters('siovnetLocation')]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountNameName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('siomgmtNicName'))]"
       ],
       "tags": {
@@ -231,24 +231,24 @@
       },
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[parameters('siovmSize')]"
+          "vmSize": "[parameters('sioMgmtNodevmSize')]"
         },
         "osProfile": {
           "computername": "[parameters('siomgmtName')]",
-          "adminUsername": "[parameters('siomgmtAdminUsername')]",
-          "adminPassword": "[parameters('siomgmtAdminPassword')]"
+          "adminUsername": "[parameters('adminUserName')]",
+          "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
             "publisher": "[variables('siomgmtImagePublisher')]",
             "offer": "[variables('siomgmtImageOffer')]",
-            "sku": "[parameters('siomgmtWindowsOSVersion')]",
+            "sku": "[parameters('nodeWindowsOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
             "name": "siomgmtOSDisk",
             "vhd": {
-              "uri": "[concat('http://', parameters('newStorageAccountNameName'), '.blob.core.windows.net/', variables('siomgmtStorageAccountContainerName'), '/', variables('siomgmtOSDiskName'), '.vhd')]"
+              "uri": "[concat('http://', parameters('newStorageAccountName'), '.blob.core.windows.net/', variables('siomgmtStorageAccountContainerName'), '/', variables('siomgmtOSDiskName'), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -310,7 +310,7 @@
       }
     },
     {
-      "name": "[concat(parameters('sionodeName'), copyindex())]",
+      "name": "[concat(variables('sionodeName'), copyindex())]",
       "type": "Microsoft.Compute/virtualMachines",
       "location": "[parameters('siovnetLocation')]",
       "copy": {
@@ -319,7 +319,7 @@
       },
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountNameName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('sionodeNicName'), copyindex())]"
       ],
       "tags": {
@@ -327,24 +327,24 @@
       },
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[parameters('siovmSize')]"
+          "vmSize": "[parameters('sioNodeVMSize')]"
         },
         "osProfile": {
-          "computername": "[concat(parameters('sionodeName'), copyIndex())]",
-          "adminUsername": "[parameters('sionodeAdminUsername')]",
-          "adminPassword": "[parameters('sionodeAdminPassword')]"
+          "computername": "[concat(variables('sionodeName'), copyIndex())]",
+          "adminUsername": "[parameters('adminUserName')]",
+          "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
             "publisher": "[variables('sionodeImagePublisher')]",
             "offer": "[variables('sionodeImageOffer')]",
-            "sku": "[parameters('sionodeWindowsOSVersion')]",
+            "sku": "[parameters('nodeWindowsOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
             "name": "sionodeOSDisk",
             "vhd": {
-              "uri": "[concat('http://', parameters('newStorageAccountNameName'), '.blob.core.windows.net/', variables('sionodeStorageAccountContainerName'), '/', variables('sionodeOSDiskName'), copyIndex(), '.vhd')]"
+              "uri": "[concat('http://', parameters('newStorageAccountName'), '.blob.core.windows.net/', variables('sionodeStorageAccountContainerName'), '/', variables('sionodeOSDiskName'), copyIndex(), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -353,7 +353,7 @@
             {
               "name": "sionodeDataDisk",
               "vhd": {
-                "uri": "[concat('http://', parameters('newStorageAccountNameName'), '.blob.core.windows.net/', variables('sionodeStorageAccountContainerName'), '/', variables('sionodeOSDiskName'), copyIndex(), 'data.vhd')]"
+                "uri": "[concat('http://', parameters('newStorageAccountName'), '.blob.core.windows.net/', variables('sionodeStorageAccountContainerName'), '/', variables('sionodeOSDiskName'), copyIndex(), 'data.vhd')]"
               },
               "lun": 3,
               "diskSizeGB": 100,
@@ -386,17 +386,17 @@
           "fileUris": [
             "http://bkvarda.blob.core.windows.net/sioazure/Install-SIOMgmtPackages.ps1"
           ],
-          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File Install-SIOMgmtPackages.ps1 -Nodes ', parameters('numberOfNodes'), ' -Username ', parameters('siomgmtAdminUserName'), ' -Password ', parameters('siomgmtAdminPassword'))]"
+          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File Install-SIOMgmtPackages.ps1 -Nodes ', parameters('numberOfNodes'), ' -Username ', parameters('adminUserName'), ' -Password \"', parameters('adminPassword'), '\"')]"
         }
       }
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('sionodeName'), copyIndex(), '/extension')]",
+      "name": "[concat(variables('sionodeName'), copyIndex(), '/extension')]",
       "apiVersion": "2015-05-01-preview",
       "location": "[parameters('siovnetLocation')]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('sionodeName'), copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', variables('sionodeName'), copyIndex())]"
       ],
       "copy": {
         "name": "sio",

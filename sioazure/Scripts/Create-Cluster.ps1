@@ -16,6 +16,25 @@ $nodescriptdestination = $rootdestination + "\Install-SIONodePackages.ps1"
 
 
 
-#Do the thing
+#Upload packages, deploy cluster
 
 java -jar C:\scaleio\install-CLI.jar script --file C:\scaleio\siodeploy.txt
+
+#Add MDM to trusted hosts
+
+Set-Item wsman:\localhost\Client\TrustedHosts -value 10.0.0.5 -Force
+
+Enter-PSSession -ComputerName 10.0.0.5
+
+#Login to MDM
+
+scli --login --username admin --password Password123
+
+#Add a volume to the mgmt host
+
+scli --mdm_ip 10.0.0.5 --add_volume --protection_domain_name domain1 --storage_pool_name pool1 --size_gb 64 --volume_name vol1
+
+#Map volume to mgmt host
+scli --mdm_ip 10.0.0.5 --map_volume_to_sdc --volume_name vol1 --sdc_ip 10.0.0.4
+
+
