@@ -1,0 +1,5 @@
+im login --host 10.0.0.4 --port 443 --username admin --password Password123 --cer <certificate_path>
+im install --path C:\scaleio\install_csv.csv --mdm_password Password123 --lia_password Password123 --non_interactive true
+im set_upload_state
+im set_install_state
+im set_configure_state

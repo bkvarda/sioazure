@@ -39,6 +39,7 @@
     <None Include="Scripts\Prepare-SIONode.ps1" />
     <None Include="Scripts\Build-SIOCSV.ps1" />
     <None Include="Scripts\Create-Cluster.ps1" />
+    <None Include="Scripts\siodeploy.txt" />
     <None Include="Templates\DeploymentTemplate.param.dev.json" />
   </ItemGroup>
   <ItemGroup>

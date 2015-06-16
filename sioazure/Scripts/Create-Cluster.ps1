@@ -13,19 +13,9 @@ $rootdestination = "C:\scaleio"
 $pythondestination = $rootdestination + "\python.msi"
 $nodescriptdestination = $rootdestination + "\Install-SIONodePackages.ps1"
 
-#Add MDMs to TrustedHosts
-Write-Host "Adding MDMs as trusted hosts and Installing Packages"
-Set-Item wsman:\localhost\Client\TrustedHosts -value 10.0.0.5 -Force
-Invoke-Command -ComputerName 10.0.0.5 -FilePath $nodescriptdestination
-
-Set-Item wsman:\localhost\Client\TrustedHosts -value 10.0.0.6 -Force
-Invoke-Command -ComputerName 10.0.0.6 -FilePath $nodescriptdestination
 
 
 
+#Do the thing
 
-#Upload packages to the gateway
-
-#Push the packages out
-
-#Profit
+java -jar C:\scaleio\install-CLI.jar script --file C:\scaleio\siodeploy.txt
