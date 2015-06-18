@@ -77,6 +77,18 @@
         "Standard_G2"
       ]
     },
+    "sioNodeDiskSize": {
+      "type": "int",
+      "defaultValue": "100",
+      "allowedValues": [
+        "100",
+        "200",
+        "300",
+        "400",
+        "500",
+        "1000"
+      ]
+    },
     "sioMgmtNodeVMSize": {
       "type": "string",
       "defaultValue": "Basic_A1",
@@ -355,7 +367,7 @@
                 "uri": "[concat('http://', parameters('newStorageAccountName'), '.blob.core.windows.net/', variables('sionodeStorageAccountContainerName'), '/', variables('sionodeOSDiskName'), copyIndex(), 'data.vhd')]"
               },
               "lun": 3,
-              "diskSizeGB": 100,
+              "diskSizeGB": "[parameters('sioNodeDiskSize')]",
               "createOption": "Empty"
             }
           ]
