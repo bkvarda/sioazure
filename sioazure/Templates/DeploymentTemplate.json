@@ -79,14 +79,14 @@
     },
     "sioNodeDiskSize": {
       "type": "int",
-      "defaultValue": "100",
+      "defaultValue": 100,
       "allowedValues": [
-        "100",
-        "200",
-        "300",
-        "400",
-        "500",
-        "1000"
+        100,
+        200,
+        300,
+        400,
+        500,
+        1000
       ]
     },
     "sioMgmtNodeVMSize": {
