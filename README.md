@@ -11,8 +11,13 @@ This template allows you to quickly deploy X number of VMs on Azure, installs Sc
 ###Usage
 Simply click the "Deploy to Azure" button above and fill out the required parameters. Deployment requires an Azure account, which you can get for free (with 300$ free credit if it is a new account). 
 
+Once deployment completes, the gateway, API, and MDM credentials are all "admin"/"Password123". The primary MDM's IP is 10.0.0.5, and the secondary is 10.0.0.6. You can use the ScaleIO GUI from the management machine currently. Soon I will add the ability to access the MDM without remoting into the mgmt machine. 
+
 ###How Does it Work?
 SIOAzure uses a new Azure concept called Resource Groups to create a self-contained environment that has all of the resources required to create a ScaleIO environment in Azure - A virtual network, virtual NICs, a storage account, virtual machines, extensions, and a public IP/DNS name so that you can remote into the management machine. A custom JSON template defines the resources that will be deployed and the parameters that are needed in order to deploy those resources, as well as the order in which they are deployed. ScaleIO dependencies are downloaded and installed on the fly using scripts that run once the VMs are created (also known as Custom Script Extensions). The automated deployment leverages the ScaleIO gateway to handle the installation of packages and initialization of the cluster.
+
+###Why Would I Use This?
+There are a ton of things you could use it for, but a few examples would be API development (the API is exposed to the internet using a public IP/DNS), as a lab environment for experimenting, for ScaleIO demonstrations, or for performance/scenario testing in Azure.
 
 ###Limitations 
 - Resource groups are currently limited to 10 cores by default - you can increase it by opening a ticket in Azure. 
@@ -38,8 +43,7 @@ ToDo:
 
 Longer Term:
 - Tweak availability zones for perf 
-- Include benchmarking tools?
+- Refactor to make it possible to support new releases without modifications
 
-I'll list the parameters that the template expects soon. 
 
 
