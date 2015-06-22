@@ -94,7 +94,8 @@ Add-Type -assembly "system.io.compression.filesystem"
 
 #Install 64-bit version of SIO Gateway
 Write-Host "Intalling SIO Gateway"
-Start-Process msiexec -ArgumentList "/i $rootdestination\ScaleIO_1.32_Gateway_for_Windows_Download\EMC-ScaleIO-gateway-1.32-402.1-x64.msi /quiet GATEWAY_ADMIN_PASSWORD='Password123' GATEWAY_ADMIN_PWD_CNFRM='Password123'" -Wait
+$argstring = "/i $rootdestination\ScaleIO_1.32_Gateway_for_Windows_Download\EMC-ScaleIO-gateway-1.32-402.1-x64.msi /quiet GATEWAY_ADMIN_PASSWORD=Password123 GATEWAY_ADMIN_PWD_CNFRM=Password123"
+Start-Process msiexec -ArgumentList $argstring -Wait
 
 #Install the GUI
 Write-Host "Installing GUI"
