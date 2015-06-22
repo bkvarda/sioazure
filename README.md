@@ -11,7 +11,24 @@ This template allows you to quickly deploy X number of VMs on Azure, installs Sc
 ###Usage
 Simply click the "Deploy to Azure" button above and fill out the required parameters. Deployment requires an Azure account, which you can get for free (with 300$ free credit if it is a new account). 
 
-Once deployment completes, the gateway, API, and MDM credentials are all "admin"/"Password123". The primary MDM's IP is 10.0.0.5, and the secondary is 10.0.0.6. You can use the ScaleIO GUI from the management machine currently. Soon I will add the ability to access the MDM without remoting into the mgmt machine. 
+Once deployment completes, the gateway, API, and MDM credentials are all "admin"/"Password123". The primary MDM's IP is 10.0.0.5, and the secondary is 10.0.0.6. You can use the ScaleIO GUI from the management machine currently. Soon I will add the ability to access the MDM without remoting into the mgmt machine.
+
+###Parameters
+|  Parameter | Description  |
+|---|---|
+| newStorageAccountName | Name of the storage account that will be created to store resources. Must be unique |
+| newStorageAccountType  | Type of storage account - locally redundant or greater |
+| newStorageAccountLocation  | Location of storage account (region)  |
+| siovnetLocation  | Location of virtual network to be created (region). Should use the same location throughout  |
+| siomgmtName  | Name of the ScaleIO management machine  |
+| adminUserName  | Windows Username  |
+| adminPassword  | Windows Password - must meet Azure password complexity standards  |
+| nodeWindowsOSVersion  | Windows version to be deployed |
+| sioNodeVMSize  | Azure VM SKU to be used for storage nodes  |
+| sioNodeDiskSize  | Disk size to be used for storage nodes  |
+| sioMgmtNodeVMSize  | Azure VM SKU to be used as management machine  |
+| publicIPAddressNameDnsName  | DNS name to be used to expose management machine - must be unique  |
+
 
 ###How Does it Work?
 SIOAzure uses a new Azure concept called Resource Groups to create a self-contained environment that has all of the resources required to create a ScaleIO environment in Azure - A virtual network, virtual NICs, a storage account, virtual machines, extensions, and a public IP/DNS name so that you can remote into the management machine. A custom JSON template defines the resources that will be deployed and the parameters that are needed in order to deploy those resources, as well as the order in which they are deployed. ScaleIO dependencies are downloaded and installed on the fly using scripts that run once the VMs are created (also known as Custom Script Extensions). The automated deployment leverages the ScaleIO gateway to handle the installation of packages and initialization of the cluster.
