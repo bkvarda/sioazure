@@ -1,4 +1,4 @@
-# Rapidly deploy ScaleIO in Azure!
+# SIOAzure
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbkvarda%2Fsioazure%2Fmaster%2Fsioazure%2FTemplates%2FDeploymentTemplate.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
@@ -6,18 +6,35 @@
 
 Built by: [bkvarda](https://github.com/bkvarda)
 
-This template allows you to quickly deploy X number of VMs on Azure and automatically deploys ScaleIO.
+This template allows you to quickly deploy X number of VMs on Azure, installs ScaleIO dependencies, and initializes the cluster so that the environment is ready to go as soon as you log in. 
 
-Current Status: 
-- VMs and all supported infrastructure up to thousands of VMs automatically provisioned (where X is the Resource Group limit imposed by your subscription)
+###Usage
+Simply click the "Deploy to Azure" button above and fill out the required parameters. Deployment requires an Azure account, which you can get for free (with 300$ free credit if it is a new account). 
+
+###How Does it Work?
+SIOAzure uses a new Azure concept called Resource Groups to create a self-contained environment that has all of the resources required to create a ScaleIO environment in Azure - A virtual network, virtual NICs, a storage account, virtual machines, extensions, and a public IP/DNS name so that you can remote into the management machine. A custom JSON template defines the resources that will be deployed and the parameters that are needed in order to deploy those resources, as well as the order in which they are deployed. ScaleIO dependencies are downloaded and installed on the fly using scripts that run once the VMs are created (also known as Custom Script Extensions). The automated deployment leverages the ScaleIO gateway to handle the installation of packages and initialization of the cluster.
+
+###Limitations 
+- Resource groups are currently limited to 10 cores by default - you can increase it by opening a ticket in Azure. 
+- Because of the above - depending on your chosen SKUs - you may not be able to create a large environment until you get your quota increased. Try starting with 3 node clusters until your quota is increased or quota limits are increased/eliminated when Resource Groups become GA
+- Make sure your chosen VM password meets Azure password strength requirements or the deployment will fail
+- Make sure your DNS Name is unique, or the creation of public IP/DNS will fail and you won't be able to access the environment
+- Basic SKUs have unpredictable network conditions, and will result in cluster issues.
+- The drive size chosen must be supported by the VM SKUs you choose, or else Azure deployment will fail.  
+
+
+###Current Status: 
+- VMs and all supported infrastructure up to hundreds of VMs automatically provisioned (limit is # of cores per Resource Group imposed by your subscription)
 - ScaleIO Management packages deployed to management VM (Gateway, GUI, Java), and accessible over public IP
-- ScaleIO Storage Node packages deployed to X number of VMs (Python, C++ Python Compiler, PyWin32, Paramiko, WMI )  
+- ScaleIO Storage Node packages deployed to X number of VMs (Python, C++ Python Compiler, PyWin32, Paramiko, WMI )
+- SQLIO and IOmeter deployed to all machines
+- A volume is created and attached to the mgmt machine.   
 
 ToDo:
-- Make Mgmt private IP static
-- Build out deployment CSV
-- Initialize/Format data drives
-- Automate cluster creation
+- Execute cluster creation as part of deployment so everything is ready when you begin
+- Allow for more than 1 disk per VM
+- Create caching or separate pools for VM SKUs with non-persistent SSD included
+
 
 Longer Term:
 - Tweak availability zones for perf 

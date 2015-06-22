@@ -92,16 +92,18 @@ Write-Host "Extracting ScaleIO files..."
 Add-Type -assembly "system.io.compression.filesystem"
 [io.compression.zipfile]::ExtractToDirectory($siodestination,$rootdestination)
 
+#Install 64-bit version of SIO Gateway
+Write-Host "Intalling SIO Gateway"
+Start-Process msiexec -ArgumentList "/i $rootdestination\ScaleIO_1.32_Gateway_for_Windows_Download\EMC-ScaleIO-gateway-1.32-402.1-x64.msi /quiet  GATEWAY_ADMIN_PASSWORD='Password123' GATEWAY_ADMIN_PWD_CNFRM='Password123'" -Wait
+
 #Install the GUI
 Write-Host "Installing GUI"
 Start-Process "$rootdestination\ScaleIO_1.32_GUI_for_Windows_Download\EMC-ScaleIO-gui-1.32-402.1.msi" /quiet -Wait
 
-#Install 64-bit version of SIO Gateway
-Write-Host "Intalling SIO Gateway"
-msiexec.exe /i "$rootdestination\ScaleIO_1.32_Gateway_for_Windows_Download\EMC-ScaleIO-gateway-1.32-402.1-x64.msi" /quiet  GATEWAY_ADMIN_PASSWORD='Password123' GATEWAY_ADMIN_PWD_CNFRM='Password123'
 
 #Build a CSV payload for creation of cluster
-./$csvscriptdestination -Nodes $Nodes -Username $Username -Password "$Password" | Out-File C:\scaleio\troubleshoot.txt
+powershell.exe -ExecutionPolicy Unrestricted -File $csvscriptdestination -Nodes $Nodes -Username $Username -Password $Password
+
 
 
 

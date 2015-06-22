@@ -9,6 +9,9 @@ Param(
 
 )
 
+$rootdestination = "C:\scaleio"
+$clusterscriptdestination = $rootdestination + "\Create-Cluster.ps1"
+
 $csvobject = @()
 
 $mgmt = New-Object PSObject
@@ -144,3 +147,6 @@ For($i = 8; $i -le $Nodes+4; $i++){
 }
 
 $csvobject | Export-CSV C:\scaleio\install_csv.csv -NoTypeInformation
+
+#Create the cluster
+powershell.exe -ExecutionPolicy Unrestricted -File $clusterscriptdestination
