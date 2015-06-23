@@ -8,9 +8,11 @@ Built by: [bkvarda](https://github.com/bkvarda)
 
 This template allows you to quickly deploy X number of VMs on Azure, installs ScaleIO dependencies, and initializes the cluster so that the environment is ready to go as soon as you log in. 
 
+Click below for a video demo
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=2WzeKM_tcIw
 " target="_blank"><img src="http://img.youtube.com/vi/2WzeKM_tcIw/0.jpg" 
-alt="Deploy ScaleIO in Azure" width="240" height="180" border="10" /></a>
+alt="Deploy ScaleIO in Azure" width="640" height="480" border="10" /></a>
 
 ###Usage
 Simply click the "Deploy to Azure" button above and fill out the required parameters. Deployment requires an Azure account, which you can get for free (with 300$ free credit if it is a new account). 
