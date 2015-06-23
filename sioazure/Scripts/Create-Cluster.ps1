@@ -18,14 +18,12 @@ $nodescriptdestination = $rootdestination + "\Install-SIONodePackages.ps1"
 
 C:\ProgramData\Oracle\Java\javapath\java.exe -jar C:\scaleio\install-CLI.jar script --file C:\scaleio\siodeploy.txt
 
-Start-Sleep -Seconds 10
+Start-Sleep -Seconds 5
 
 #Add MDM to trusted hosts, Login to MDM, Add a volume to the mgmt host and map to it
 
 Set-Item wsman:\localhost\Client\TrustedHosts -value 10.0.0.5 -Force
 $session =New-PSSession -ComputerName 10.0.0.5
-Start-Sleep -Seconds 10
-
 Invoke-Command -Session $session -ScriptBlock{
 scli --login --username admin --password Password123
 scli --mdm_ip 10.0.0.5 --add_volume --protection_domain_name domain1 --storage_pool_name pool1 --size_gb 64 --volume_name vol1

@@ -8,10 +8,16 @@ Built by: [bkvarda](https://github.com/bkvarda)
 
 This template allows you to quickly deploy X number of VMs on Azure, installs ScaleIO dependencies, and initializes the cluster so that the environment is ready to go as soon as you log in. 
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=2WzeKM_tcIw
+" target="_blank"><img src="http://img.youtube.com/vi/2WzeKM_tcIw/0.jpg" 
+alt="Deploy ScaleIO in Azure" width="240" height="180" border="10" /></a>
+
 ###Usage
 Simply click the "Deploy to Azure" button above and fill out the required parameters. Deployment requires an Azure account, which you can get for free (with 300$ free credit if it is a new account). 
 
 Once deployment completes, the gateway, API, and MDM credentials are all "admin"/"Password123". The primary MDM's IP is 10.0.0.5, and the secondary is 10.0.0.6. You can use the ScaleIO GUI from the management machine currently. Soon I will add the ability to access the MDM without remoting into the mgmt machine.
+
+From PowerShell on the management machine, you can use "Enter-PSSession -ComputerName 10.0.0.5" to remote to the primary MDM and then run "scli" commands from there.
 
 ###Parameters
 |  Parameter | Description  |
