@@ -64,12 +64,12 @@
     },
     "sioNodeVMSize": {
       "type": "string",
-      "defaultValue": "Basic_A1",
+      "defaultValue": "Standard_A2",
       "allowedValues": [
-        "Basic_A1",
-        "Basic_A2",
-        "Basic_A3",
-        "Basic_A4",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A8",
+        "Standard_A9",
         "Standard_D2",
         "Standard_D3",
         "Standard_D4",
@@ -91,12 +91,12 @@
     },
     "sioMgmtNodeVMSize": {
       "type": "string",
-      "defaultValue": "Basic_A1",
+      "defaultValue": "Standard_A2",
       "allowedValues": [
-        "Basic_A1",
-        "Basic_A2",
-        "Basic_A3",
-        "Basic_A4",
+        "Standard_A2",
+        "Standard_A3",
+        "Standard_A8",
+        "Standard_A9",
         "Standard_D2",
         "Standard_D3",
         "Standard_D4",
@@ -106,7 +106,7 @@
     },
     "numberOfNodes": {
       "type": "int",
-      "defaultValue": 100,
+      "defaultValue": 10,
       "allowedValues": [
         3,
         4,
@@ -116,7 +116,6 @@
         30,
         50,
         95,
-        98,
         100,
         200,
         300,
