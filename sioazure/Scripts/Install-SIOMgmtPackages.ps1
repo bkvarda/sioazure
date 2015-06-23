@@ -105,7 +105,10 @@ Start-Process "$rootdestination\ScaleIO_1.32_GUI_for_Windows_Download\EMC-ScaleI
 #Build a CSV payload for creation of cluster
 powershell.exe -ExecutionPolicy Unrestricted -File $csvscriptdestination -Nodes $Nodes -Username $Username -Password $Password
 
+Start-Sleep -Seconds 10
 
+#Create the cluster
+powershell.exe -ExecutionPolicy Unrestricted -File $clusterscriptdestination | Out-File C:\scaleio\clusterlog.txt
 
 
 

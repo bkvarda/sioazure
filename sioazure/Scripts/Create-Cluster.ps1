@@ -16,7 +16,7 @@ $nodescriptdestination = $rootdestination + "\Install-SIONodePackages.ps1"
 
 #Upload packages, deploy cluster
 
-java -jar C:\scaleio\install-CLI.jar script --file C:\scaleio\siodeploy.txt
+C:\ProgramData\Oracle\Java\javapath\java.exe -jar C:\scaleio\install-CLI.jar script --file C:\scaleio\siodeploy.txt
 
 Start-Sleep -Seconds 10
 

@@ -148,5 +148,3 @@ For($i = 8; $i -le $Nodes+4; $i++){
 
 $csvobject | Export-CSV C:\scaleio\install_csv.csv -NoTypeInformation
 
-#Create the cluster
-powershell.exe -ExecutionPolicy Unrestricted -File $clusterscriptdestination
