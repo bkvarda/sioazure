@@ -75,7 +75,9 @@
         "Standard_D4",
         "Standard_G1",
         "Standard_G2",
+        "Standard_DS1",
         "Standard_DS2",
+        "Standard_DS11",
         "Standard_DS12"
       ]
     },
