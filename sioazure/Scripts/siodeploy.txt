@@ -6,6 +6,11 @@ im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-sd
 im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-sds-1.32-402.1.msi
 im upload_package --path C:\scaleio\ScaleIO_1.32_Windows_Download\EMC-ScaleIO-tb-1.32-402.1.msi
 im install --path C:\scaleio\install_csv.csv --mdm_password Password123 --lia_password Password123 --non_interactive true
+im set_clean_state
 im set_upload_state
+im retry_commands
 im set_install_state
+im retry_commands
 im set_configure_state
+im retry_commands
+quit
